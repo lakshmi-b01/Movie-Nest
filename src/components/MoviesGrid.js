@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import "../styles.css";
 import MovieCard from "./MovieCard";
 
-export default function MoviesGrid({movies}) {
-  
+export default function MoviesGrid({ movies, watchlist, toggleWatchList }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [genre, setGenre] = useState("All Genres");
   const [rating, setRating] = useState("All");
@@ -21,7 +20,10 @@ export default function MoviesGrid({movies}) {
   };
 
   const matchesGenre = (movie, genre) => {
-    return genre === "All Genres" || movie.genre.toLowerCase() === genre.toLowerCase();
+    return (
+      genre === "All Genres" ||
+      movie.genre.toLowerCase() === genre.toLowerCase()
+    );
   };
 
   const matchesSearchTerm = (movie, searchTerm) => {
@@ -29,11 +31,11 @@ export default function MoviesGrid({movies}) {
   };
 
   const matchesRating = (movie, rating) => {
-    switch(rating) {
+    switch (rating) {
       case "Good":
         return movie.rating > 8;
       case "Ok":
-        return (movie.rating >= 5 && movie.rating < 8);
+        return movie.rating >= 5 && movie.rating < 8;
       case "Bad":
         return movie.rating < 5;
       case "All":
@@ -43,14 +45,13 @@ export default function MoviesGrid({movies}) {
     }
   };
 
-
-const filteredMovies = movies.filter((movie) => {
-  return (
-    matchesGenre(movie, genre) &&
-    matchesRating(movie, rating) &&
-    matchesSearchTerm(movie, searchTerm)
-  );
-});
+  const filteredMovies = movies.filter((movie) => {
+    return (
+      matchesGenre(movie, genre) &&
+      matchesRating(movie, rating) &&
+      matchesSearchTerm(movie, searchTerm)
+    );
+  });
 
   return (
     <div>
@@ -96,7 +97,12 @@ const filteredMovies = movies.filter((movie) => {
       <div className="movies-grid">
         {filteredMovies.length > 0 ? (
           filteredMovies.map((movie) => (
-            <MovieCard movie={movie} key={movie.id}></MovieCard>
+            <MovieCard
+              movie={movie}
+              key={movie.id}
+              toggleWatchList={toggleWatchList}
+              isWatchListed={watchlist.includes(movie.id)}
+            ></MovieCard>
           ))
         ) : (
           <p>"{searchTerm}" does not exist</p>
